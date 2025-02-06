@@ -40,25 +40,20 @@ data class Dog(
 fun App() {
     val database = remember { connectToMongoDB() }
     val collection = remember { database.getCollection<Dog>("dogs") }
-    LaunchedEffect(Unit) {
+    LaunchedEffect("d") {
         collection.insertMany(listOf(Dog(ObjectId(), "Rex"), Dog(ObjectId(), "Lassie")))
+        val dogs = collection.find().toList()
     }
     val dogs by produceState(initialValue = emptyList<Dog>(), key1 = collection) {
         value = collection.find().toList()
     }
     MaterialTheme {
         Column (modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Dogsdb",
-                style = MaterialTheme.typography.h4
-            )
             AnimatedVisibility(visible = dogs.isNotEmpty()) {
                 Column {
                     dogs.forEach { dog ->
                         Text(
-                            text = dog.name,
-                            style = MaterialTheme.typography.h5,
-                            modifier = Modifier.fillMaxWidth()
+                            text = dog.name
                         )
                     }
                 }
