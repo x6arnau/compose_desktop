@@ -41,22 +41,18 @@ fun App() {
     val database = remember { connectToMongoDB() }
     val collection = remember { database.getCollection<Dog>("dogs") }
     LaunchedEffect("d") {
-        collection.insertMany(listOf(Dog(ObjectId(), "Rex"), Dog(ObjectId(), "Lassie")))
+        //collection.insertMany(listOf(Dog(ObjectId(), "Rex"), Dog(ObjectId(), "Lassie"), Dog(ObjectId(), "Pluto"), Dog(ObjectId(), "Goofy")))
         val dogs = collection.find().toList()
     }
     val dogs by produceState(initialValue = emptyList<Dog>(), key1 = collection) {
         value = collection.find().toList()
     }
     MaterialTheme {
-        Column (modifier = Modifier.padding(16.dp)) {
-            AnimatedVisibility(visible = dogs.isNotEmpty()) {
-                Column {
-                    dogs.forEach { dog ->
-                        Text(
-                            text = dog.name
-                        )
-                    }
-                }
+        Column(modifier = Modifier.padding(16.dp)) {
+            dogs.forEach { dog ->
+                Text(
+                    text = dog.name
+                )
             }
         }
     }
